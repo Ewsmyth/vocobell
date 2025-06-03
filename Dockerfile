@@ -1,12 +1,14 @@
-FROM --platform=linux/arm64 python:3.11-slim
+FROM python:3.11-slim
 
 WORKDIR /app
 
-COPY . /app
+COPY . .
 
-LABEL org.opencontainers.image.source https://github.com/ewsmyth/vocobell
+LABEL org.opencontainers.image.source=https://github.com/ewsmyth/vocobell
 
 RUN pip install --no-cache-dir -r requirements.txt
+
+ENV PYTHONPATH=/app
 
 EXPOSE 5665
 
