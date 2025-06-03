@@ -14,31 +14,20 @@ jobs:
 
       - name: Get commit message
         id: get-message
-        run: |
-          COMMIT_MSG=$(git log -1 --pretty=%B | tr '[:upper:]' '[:lower:]' | tr -c 'a-z0-9._-' '-' | cut -c1-40)
-          if [ -z "$COMMIT_MSG" ]; then COMMIT_MSG="untagged"; fi
-          echo "COMMIT_MSG=$COMMIT_MSG" >> $GITHUB_ENV
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-        with:
-          install: true
-          driver: docker-container
+        run: echo "COMMIT_MSG=$(git log -1 --pretty=%B | tr '[:upper:]' '[:lower:]' | tr -c 'a-z0-9._-' '-')" >> $GITHUB_ENV
 
       - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v2.2.0
+        uses: docker/login-action@v2
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.VOCOBELL_SECRET_TOKEN_SECURE }}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v4.1.1
+        uses: docker/build-push-action@v4
         with:
           context: .
           push: true
           tags: |
             ghcr.io/ewsmyth/vocobell:latest
             ghcr.io/ewsmyth/vocobell:${{ env.COMMIT_MSG }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
