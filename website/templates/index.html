@@ -1,0 +1,29 @@
+<!doctype html>
+<title>Smart Chime Webhooks</title>
+<h2>Upload New Audio File</h2>
+<form method="POST" enctype="multipart/form-data">
+  WAV File: <input type="file" name="new_sound">
+  <input type="submit" name="upload" value="Upload">
+</form>
+
+<hr>
+
+<h2>Create Webhook</h2>
+<form method="POST">
+  Select Audio File:
+  <select name="sound_file">
+    {% for file in files %}
+      <option value="{{ file }}">{{ file }}</option>
+    {% endfor %}
+  </select>
+  <input type="submit" name="create_webhook" value="Create Webhook">
+</form>
+
+<hr>
+
+<h2>Existing Webhooks</h2>
+<ul>
+  {% for key, val in actions.items() %}
+    <li><code>{{ key }}</code> → <b>{{ val.split('/')[-1] }}</b></li>
+  {% endfor %}
+</ul>
