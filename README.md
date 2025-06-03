@@ -93,6 +93,12 @@ sudo apt update
 ```bash
 sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 ```
+```bash
+sudo usermod -aG docker admin
+```
+```bash
+sudo reboot
+```
 ## Install Portainer
 ```bash
 sudo docker volume create portainer_data
