@@ -40,3 +40,4 @@ jobs:
             ghcr.io/ewsmyth/vocobell:${{ env.COMMIT_MSG }}
           labels: |
             org.opencontainers.image.source=https://github.com/ewsmyth/vocobell
+            
