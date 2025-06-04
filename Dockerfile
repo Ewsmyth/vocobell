@@ -6,7 +6,9 @@ COPY . .
 
 LABEL org.opencontainers.image.source=https://github.com/ewsmyth/vocobell
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN apt-get update && apt-get install -y alsa-utils && \
+    pip install --no-cache-dir -r requirements.txt && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ENV PYTHONPATH=/app
 
