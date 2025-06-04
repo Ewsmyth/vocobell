@@ -116,7 +116,7 @@ https://<serverip>:9443
 ```
 ## Install VocoBell
 ```
-sudo docker run -d -p 5665:5665 --restart=always ghcr.io/ewsmyth/vocobell:latest
+sudo docker run -d -p 5665:5665 --restart=always --device /dev/snd ghcr.io/ewsmyth/vocobell:latest
 ```
 
 ## 🧯 Troubleshooting
