@@ -120,9 +120,12 @@ https://<serverip>:9443
 ```bash
 sudo nano /boot/firmware/config.txt
 ```
+  - Turn off dtparam audio
+  ```
+  dtparam=audio=off
+  ```
   - You'll need to comment out the following lines:
   ```
-  # dtparam=audio=on
   # dtoverlay=vc4-kms-v3d
   # max_framebuffers=2
   ```
