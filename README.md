@@ -115,9 +115,40 @@ sudo docker run -d -p 8000:8000 -p 9443:9443 \
 https://<serverip>:9443
 ```
 ## Install VocoBell
+
+- **First you'll need to set up you Inno-Maker DAC**
+```bash
+sudo nano /boot/firmware/config.txt
 ```
-sudo docker run -d -p 5665:5665 --restart=always --device /dev/snd ghcr.io/ewsmyth/vocobell:latest
+  - You'll need to comment out the following lines:
+  ```
+  # dtparam=audio=on
+  # dtoverlay=vc4-kms-v3d
+  # max_framebuffers=2
+  ```
+  - Then you'll add this line into the config file:
+  ```
+  # Enable HiFiBerry DAC for audio output
+  dtoverlay=hifiberry-dac
+  ```
+  - Next you'll need to reboot your Pi
+  ```
+  sudo reboot
+  ```
+  - Verify aplay recognizes your DAC
+  ```
+  aplay -l
+  ```
+- **Now you you can install the container**
 ```
+sudo docker run -d -p 5665:5665 --restart=always --device /dev/snd --group-add audio --volume /etc/asound.conf:/etc/asound.conf:ro ghcr.io/ewsmyth/vocobell:latest
+```
+
+## Adding audio files
+- Audio files should have the following features
+  - Stereo (not mono)
+  - 48kHz 
+  - .wav
 
 ## 🧯 Troubleshooting
 
