@@ -2,7 +2,6 @@ from flask import Blueprint, render_template, request
 import uuid
 import os
 import subprocess
-import wave
 
 user = Blueprint('user', __name__)
 
@@ -17,13 +16,8 @@ def index():
     if request.method == "POST":
         if 'upload' in request.form:
             sound = request.files['new_sound']
-
             if not sound.filename.endswith(".wav"):
                 return "Only WAV files allowed", 400
-            with wave.open(sound, 'rb') as w:
-                if w.getnchannels() != 2 or w.getframerate() != 48000:
-                    return "Only 48kHz stereo WAV files supported", 400
-            
             save_path = os.path.join(SOUND_FOLDER, sound.filename)
             sound.save(save_path)
 
@@ -44,5 +38,5 @@ def webhook(uid):
     if uid not in ACTIONS:
         return "Invalid webhook ID", 404
     filename = ACTIONS[uid]
-    subprocess.Popen(["aplay", "-D", "plughw:0,0", "-r", "48000", filename])
+    subprocess.Popen(["aplay", filename])
     return "Audio triggered!", 200
