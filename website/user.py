@@ -9,6 +9,7 @@ from .models import db, User, SoundFile, Webhook
 from flask_login import current_user, login_required
 from sqlalchemy.exc import SQLAlchemyError
 import wave
+from website import csrf
 
 user = Blueprint('user', __name__)
 
@@ -118,6 +119,7 @@ def userCreateWebhook(username):
     return redirect(url_for('user.userDashboard', username=username))
 
 @user.route("/webhook/<uid>", methods=["POST"])
+@csrf.exempt
 def webhook(uid):
     if uid not in ACTIONS:
         return "Invalid webhook ID", 404
