@@ -18,7 +18,7 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///vocobell.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = 'CHANGE_THIS_TO_A_RANDOM_KEY'
-    app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'static/sounds')
+    app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static/sounds')
 
     db.init_app(app)
     csrf.init_app(app)
