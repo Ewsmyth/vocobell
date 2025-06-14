@@ -5,6 +5,7 @@ from flask_limiter.util import get_remote_address
 from flask_login import LoginManager
 from .models import db, User
 from .utils import createAdminUser
+import os
 
 csrf = CSRFProtect()
 limiter = Limiter(get_remote_address)
@@ -17,6 +18,7 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///vocobell.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = 'CHANGE_THIS_TO_A_RANDOM_KEY'
+    app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'instance/uploads')
 
     db.init_app(app)
     csrf.init_app(app)
