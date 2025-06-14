@@ -7,7 +7,7 @@ echo "Starting VocoBell installation..."
 
 # Update and install system packages
 sudo apt update
-sudo apt install -y python3 python3-venv python3-pip git nginx openssl
+sudo apt install -y python3 python3-venv python3-pip git nginx openssl alsa-utils
 
 # Create virtual environment if it doesn't exist
 if [ ! -d "venv" ]; then
