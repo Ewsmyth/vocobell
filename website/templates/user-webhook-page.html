@@ -1,0 +1,63 @@
+{% extends 'user-base1.html' %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/user-webhook-page.css') }}">
+{% endblock %}
+
+{% block content %}
+  <div class="top-navbar">
+    <button id="toggleButton">
+      <p id="toggleBtnTxt">Create Webhook</p>
+      <svg id="toggleBtnIcon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
+        <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/>
+      </svg>
+    </button>
+  </div>
+
+  <div id="slideDiv">
+    <div class="header-wrap">
+      <h4>Create Webhook</h4>
+      <button id="closeButton">&times;</button>
+    </div>
+    <div class="main-slider-content-wrap">
+      <form action="{{ url_for('user.userCreateWebhook', username=username) }}" enctype="multipart/form-data" method="post">
+        {{ form.hidden_tag() }}
+        <div class="webhook-name-wrapper{% if form.webhookName.data %}active{% endif %}" data-placeholder="Webhook Name">
+          {{ form.webhookName(id='webhookNameInput', placeholder=' ') }}
+          <label for="webhookNameInput">Webhook Name</label>
+        </div>
+        <hr>
+        <div class="sound-select-wrapper">
+          {{ form.soundFileSelect(id='soundFileSelect') }}
+        </div>
+        <div class="webhook-submit-wrapper">
+          {{ form.submit(id='submit') }}
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="webhook-list">
+    <h2>Your Webhooks:</h2>
+    {% if webhooks %}
+      <ul class="webhook-ul">
+        {% for webhook in webhooks %}
+          <li class="webhook-item">
+            <div class="webhook-info">
+              <span class="webhook-name">{{ webhook.webhook_name }}</span>
+              <span class="webhook-url">{{ request.host_url }}webhook/{{ webhook.uid }}</span>
+            </div>
+            <button class="copy-btn" data-url="{{ request.host_url }}webhook/{{ webhook.uid }}">Copy</button>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No webhooks created yet.</p>
+    {% endif %}
+  </div>
+
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/user-webhook-page.js') }}"></script>
+{% endblock %}

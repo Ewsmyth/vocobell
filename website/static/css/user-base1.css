@@ -1,0 +1,185 @@
+:root {
+  --left-navbar-bg-color: #f7f7f7;
+  --left-sidebar-txt-color: #1f1f1f;
+  --left-sidebar-border-color: #dbdada;
+  --toggle-sidebar-btn-bg-color: #dadada;
+  --sidebar-btn-hover-color: #e9e9e9;
+  --tooltip-bg-color: #e0e0e0;
+  --tooltip-txt-color: #131313;
+}
+body.dark-mode {
+  --left-navbar-bg-color: #3b3b3b;
+  --left-sidebar-txt-color: #c0c0c0;
+  --left-sidebar-border-color: #5a5a5a;
+  --toggle-sidebar-btn-bg-color: #333333;
+  --sidebar-btn-hover-color: #e9e9e9;
+  --tooltip-bg-color: #f7f7f7;
+  --tooltip-txt-color: #2e2e2e;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  display: flex;
+  background-color: var(--left-navbar-bg-color);
+}
+
+
+/* Main sidebar styling */
+.sidebar {
+  position: relative;
+  width: 250px;
+  min-width: 250px;
+  background-color: var(--left-navbar-bg-color);
+  height: 100vh;
+  transition: width 0.3s;
+  border-right: 1px solid var(--left-sidebar-border-color);
+}
+.sidebar.collapsed,
+.sidebar-collapsed .sidebar {
+  width: 60px;
+  min-width: 60px;
+}
+
+
+/* Vocobell logo styling */
+#logoLabelWrap {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  overflow: hidden;
+}
+#vocobellLogo {
+  fill: #207783;
+  stroke: #000000;
+  stroke-width: 2;
+  height: 30px;
+  width: 30px;
+  margin: 5px 10px 5px 8px;
+}
+#vocobellLabel {
+  margin: 0;
+  font-family: "Fascinate Inline", system-ui;
+  color: #207783;
+  font-size: 2rem;
+  opacity: 1;
+  transition: opacity 0.3s ease 0.9s;
+}
+.sidebar-collapsed #vocobellLabel {
+  display: none;
+  opacity: 0;
+  transition: opacity 0.2s ease 0s;
+}
+
+
+/* Chevron styling */
+.toggle-btn {
+  background-color: var(--toggle-sidebar-btn-bg-color);
+  padding: 1px;
+  cursor: pointer;
+  position: absolute;
+  right: -10px;
+  top: 40px;
+  z-index: 5;
+  border-radius: 3px;
+  border: none;
+}
+#chevronLeft,
+#chevronRight {
+  height: 20px;
+  width: 20px;
+  fill: var(--left-sidebar-txt-color);
+}
+#chevronRight,
+.collapsed #chevronLeft {
+  display: none;
+}
+.collapsed #chevronRight {
+  display: block;
+}
+
+
+/* Main navbar selection wrap styling */
+#mainBtnSelectWrapper {
+  margin: 28px 0 0 0;
+}
+.navbar-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.list-item {
+  display: flex;
+  margin: 0 0 10px 0;
+  width: 90%;
+}
+.list-a-btn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  text-decoration: none;
+  width: 100%;
+  padding: 5px 0;
+  cursor: pointer;
+  border-radius: 9px;
+  position: relative;
+}
+.list-btn-svg {
+  fill: var(--left-sidebar-txt-color);
+  height: 30px;
+  width: 30px;
+  margin: 0 8px;
+}
+.list-btn-label {
+  color: var(--left-sidebar-txt-color);
+  font-family: sans-serif;
+  font-size: 1rem;
+  margin: 0;
+  opacity: 1;
+  transition: opacity 0.3s ease 0.9s;
+}
+.sidebar-collapsed .list-btn-label {
+  display: none;
+  opacity: 0;
+  transition: opacity 0.2s ease 0s;
+}
+.sidebar-collapsed .list-a-btn {
+  justify-content: center;
+}
+.list-a-btn:hover {
+  background-color: var(--sidebar-btn-hover-color);
+}
+/* Tooltip base style - inactive by default */
+.list-a-btn::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 70px; /* right of the icon */
+  background-color: var(--tooltip-bg-color);
+  color: var(--tooltip-txt-color);
+  padding: 5px 10px;
+  border-radius: 5px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-50%);
+  top: 50%;
+  transition: opacity 0.2s ease;
+  z-index: 100;
+  font-size: 0.9rem;
+}
+/* Show tooltip only when collapsed and hovered */
+.sidebar-collapsed .list-a-btn:hover::after {
+  opacity: 1;
+}
+
+
+
+
+.main-content {
+  padding: 20px;
+}

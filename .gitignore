@@ -1,0 +1,20 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Flask instance folder (database, config, etc)
+instance/
+instance/vocobell.db
+
+# Virtual environment
+venv/
+
+# Logs
+*.log
+
+# System files
+.DS_Store
+
+# Environment files (if you ever add secrets)
+.env

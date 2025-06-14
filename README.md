@@ -4,58 +4,38 @@
 
 ## 🧠 How It Works
 
-VocoBell runs a Flask web server inside a Docker container on your Raspberry Pi Zero.  
-When a Unifi Protect doorbell is pressed, it sends a POST request to your Pi's `/ring` endpoint.  
-The Pi plays a custom chime through a connected DAC and speaker.
+VocoBell runs a Flask web server inside on your Raspberry Pi Zero.  
+Utilizing the Unifi Alarm Manager you can set alarms to trigger custom webhooks that communicate with Pi.   
+The Pi plays a custom audio file that you get to create.
 
 Basic flow:
 
-1. Doorbell is pressed.
+1. Event is triggered in Unifi Protect
 2. Unifi sends webhook to `http://<pi-ip>:5665/ring`.
 3. VocoBell receives the request and plays the sound.
 
-## 🎵 Customizing the Chime
-
-By default, VocoBell plays `chime.wav`.  
-To override it with your own audio file, mount your WAV file into the container:
-
-```bash
-sudo docker run -d -p 5665:5665 \
-  -v /home/pi/my-sound.wav:/app/chime.wav \
-  --restart=always \
-  ghcr.io/ewsmyth/vocobell:latest
-```
-
-
 ---
-
-#### 🌐 Improve Webhook Setup Section
-
-Currently, it’s missing from your latest version. Re-add it for completeness:
-
 
 ## 🔄 Setting Up Webhooks in Unifi Protect
 
-1. Open the Unifi Protect web UI.
-2. Go to **Settings** → **Advanced** → **Webhooks**.
-3. Add a new webhook with:
-    - **Event Type:** Doorbell Ring
-    - **URL:** `http://<your-pi-ip>:5665/ring`
+1. Open the Unifi Protect.
+2. Go to **Alarm Manager** → **Create Alarm** → **Action** → **Webhook** → **Custom Webhook**.
+3. Paste the Webhook from Vocobell into the **Delivery URL** input.
+    - **Example URL:** `http://<your-pi-ip>:5665/ring`
 4. Save and test — your chime should play!
 
 
 > **Hardware Setup:**  
-> Raspberry Pi Zero + Waveshare PoE HAT + I2S DAC  
-> **Software:** Dockerized Flask app triggered via Unifi Protect webhooks
+> Raspberry Pi Zero + Waveshare PoE HAT + Waveshare WM8960 Soundcard
 
 ---
 
 ## 📦 Features
 
 - Custom chime playback on GPIO speaker
-- Compatible with Unifi doorbell systems
+- Compatible with Unifi protect systems
 - Runs headlessly on a Pi Zero
-- Auto-restart and containerized deployment
+- Auto-restart
 - Secure and lightweight
 
 ---
@@ -63,14 +43,64 @@ Currently, it’s missing from your latest version. Re-add it for completeness:
 ## ⚙️ Prerequisites
 
 - Raspberry Pi Zero W/2
-- Raspberry Pi OS (Lite recommended)
+- Raspberry Pi OS (Lite with a version 5.x kernel recommended)
 - Internet connection (via PoE or Wi-Fi)
-- Speaker connected via DAC (e.g., I2S PCM5102)
-- [Unifi Protect](https://ui.com) system with webhook support
-
+- Speaker connected via DAC, Soundcard or other means.
+- [Unifi Protect](https://ui.com).
+### Install Waveshare WM8960 driver
+- **First you'll need to set up your DAC or soundcard**
+  - I used the Waveshare WM8960 Soundcard so that is what i'll demonstrate.
+You'll need to clone the WM8960 GitHub driver then install (It is recommended to use a RASPIOS with a Kernel 5.x instead of 6.x).
+```bash
+git clone https://github.com/waveshare/WM8960-Audio-HAT
+```
+```bash
+cd WM8960-Audio-HAT
+```
+```bash
+sudo ./install.sh
+```
+```bash
+sudo reboot
+```
+  - **Next,** edit your config.txt file
+```bash
+sudo nano /boot/config.txt
+```
+  - On newer OS you will find that this file tells you not to change it and instead edit /boot/firmware/config.txt, do that.
+```
+dtparam=audio=off
+dtparam=i2s=on
+dtoverlay=wm8960-soundcard,model="wm8960-soundcard",mclk-fs=256
+```
+```bash
+sudo reboot
+```
+  - Confirm the sound card is still present and configured properly.
+```bash
+aplay -l
+```
+---
+## 🔔 Install VocoBell
+```bash
+git clone https://github.com/Ewsmyth/vocobell
+```
+```bash
+cd vocobell
+```
+```bash
+bash install.sh
+```
+---
+## Adding audio files
+- Audio files should have the following features
+  - Stereo (not mono)
+  - 48kHz 
+  - .wav
 ---
 
 ## 🐳 Install Docker (for Raspberry Pi Zero)
+- The Docker image is still in development and is not stable at the moment so I would not set it up in Docker.
 
 ```bash
 sudo apt update && sudo apt upgrade -y
@@ -114,55 +144,3 @@ sudo docker run -d -p 8000:8000 -p 9443:9443 \
 ```
 https://<serverip>:9443
 ```
-## Install VocoBell
-
-- **First you'll need to set up you Inno-Maker DAC**
-```bash
-sudo nano /boot/firmware/config.txt
-```
-  - Turn off dtparam audio
-  ```
-  dtparam=audio=off
-  ```
-  - You'll need to comment out the following lines:
-  ```
-  # dtoverlay=vc4-kms-v3d
-  # max_framebuffers=2
-  ```
-  - Then you'll add this line into the config file:
-  ```
-  # Enable HiFiBerry DAC for audio output
-  dtoverlay=hifiberry-dac
-  ```
-  - Next you'll need to reboot your Pi
-  ```
-  sudo reboot
-  ```
-  - Verify aplay recognizes your DAC
-  ```
-  aplay -l
-  ```
-- **Now you you can install the container**
-```
-sudo docker run -d -p 5665:5665 --restart=always --device /dev/snd --group-add audio --volume /etc/asound.conf:/etc/asound.conf:ro ghcr.io/ewsmyth/vocobell:latest
-```
-
-## Adding audio files
-- Audio files should have the following features
-  - Stereo (not mono)
-  - 48kHz 
-  - .wav
-
-## 🧯 Troubleshooting
-
-- 🔇 **No sound?**
-  - Check wiring between DAC and speaker.
-  - Confirm the `.wav` file is supported and not corrupted.
-
-- 🔁 **Container not running?**
-  - Run `docker ps -a` to see if it crashed.
-  - Check logs with `docker logs <container_id>`.
-
-- 🌐 **Webhook not working?**
-  - Make sure your Pi IP is static or reserved via DHCP.
-  - Use `curl http://<pi-ip>:5665/ring` to test manually.

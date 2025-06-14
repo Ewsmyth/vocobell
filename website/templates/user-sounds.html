@@ -1,0 +1,68 @@
+{% extends 'user-base1.html' %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/user-sounds.css') }}">
+{% endblock %}
+
+{% block content %}
+
+  <div class="top-navbar">
+    <button id="toggleButton">
+      <p id="toggleBtnTxt">Add Sound</p>
+      <svg id="toggleBtnIcon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
+        <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/>
+      </svg>
+    </button>
+  </div>
+
+  <div id="slideDiv">
+    <div class="header-wrap">
+      <h4>Add Sound</h4>
+      <button id="closeButton">&times;</button>
+    </div>
+    <div class="main-slider-content-wrap">
+      <form action="{{ url_for('user.userSoundFileSubmit', username=username) }}" enctype="multipart/form-data" method="post">
+        {{ form.hidden_tag() }}
+        <div class="sound-name-wrapper{% if form.soundName.data %}active{% endif %}" data-placeholder="Sound Name">
+          {{ form.soundName(id='soundNameInput', placeholder=' ') }}
+          <label for="soundNameInput">Sound Name</label>
+        </div>
+        <hr>
+        <div class="file-input-wrapper">
+          <div class="upload-box" id="uploadBox">
+            <div id="uploadBoxContent">
+              <p>Drag & Drop or click to upload file</p>
+            </div>
+            {{ form.soundFileInput(id='soundFileInput') }}
+          </div>
+        </div>
+        <div class="sound-file-submit-wrapper">
+          {{ form.submitSoundFile(id='fileInput') }}
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="sound-file-list">
+    <h2>Your Uploaded Sounds:</h2>
+    {% if sound_files %}
+      <ul class="sound-list">
+        {% for sound in sound_files %}
+          <li class="sound-item">
+            <span>{{ sound.sound_name }}</span>
+            <button class="play-button" data-filename="{{ sound.filename }}">Play</button>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No sound files uploaded yet.</p>
+    {% endif %}
+  </div>
+
+  <audio id="audioPlayer" controls style="display:none;"></audio>
+
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/user-sounds.js') }}"></script>
+{% endblock %}
