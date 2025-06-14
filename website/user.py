@@ -130,7 +130,7 @@ def webhook(uid):
         if not sound_file:
             return "Sound file not found", 404
 
-        filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], sound_file.filepath)
+        filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], sound_file.filename)
 
         if not os.path.exists(filepath):
             return f"File not found: {filepath}", 404
