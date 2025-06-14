@@ -135,7 +135,7 @@ def webhook(uid):
         if not os.path.exists(filepath):
             return f"File not found: {filepath}", 404
 
-        subprocess.Popen(["aplay", filepath])
+        subprocess.Popen(["/usr/bin/aplay", filepath])
         return "Audio triggered!", 200
 
     except Exception as e:
