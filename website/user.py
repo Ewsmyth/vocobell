@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, abort
+from flask import Blueprint, render_template, request, redirect, url_for, flash, abort, current_app
 import uuid
 import os
 import subprocess
@@ -121,11 +121,19 @@ def userCreateWebhook(username):
 @user.route("/webhook/<uid>", methods=["POST"])
 @csrf.exempt
 def webhook(uid):
-    if uid not in ACTIONS:
+    webhook_entry = Webhook.query.filter_by(uid=uid).first()
+    if not webhook_entry:
         return "Invalid webhook ID", 404
-    filename = ACTIONS[uid]
-    subprocess.Popen(["aplay", filename])
+
+    sound_file = SoundFile.query.filter_by(sound_id=webhook_entry.sound_file_id).first()
+    if not sound_file:
+        return "Sound file not found", 404
+
+    filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], sound_file.filepath)
+
+    subprocess.Popen(["aplay", filepath])
     return "Audio triggered!", 200
+
 
 @user.route("/<username>/dashboard/sounds/")
 @login_required
