@@ -121,19 +121,25 @@ def userCreateWebhook(username):
 @user.route("/webhook/<uid>", methods=["POST"])
 @csrf.exempt
 def webhook(uid):
-    webhook_entry = Webhook.query.filter_by(uid=uid).first()
-    if not webhook_entry:
-        return "Invalid webhook ID", 404
+    try:
+        webhook_entry = Webhook.query.filter_by(uid=uid).first()
+        if not webhook_entry:
+            return "Invalid webhook ID", 404
 
-    sound_file = SoundFile.query.filter_by(sound_id=webhook_entry.sound_file_id).first()
-    if not sound_file:
-        return "Sound file not found", 404
+        sound_file = SoundFile.query.filter_by(sound_id=webhook_entry.sound_file_id).first()
+        if not sound_file:
+            return "Sound file not found", 404
 
-    filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], sound_file.filepath)
+        filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], sound_file.filepath)
 
-    subprocess.Popen(["aplay", filepath])
-    return "Audio triggered!", 200
+        if not os.path.exists(filepath):
+            return f"File not found: {filepath}", 404
 
+        subprocess.Popen(["aplay", filepath])
+        return "Audio triggered!", 200
+
+    except Exception as e:
+        return f"Internal error: {str(e)}", 500
 
 @user.route("/<username>/dashboard/sounds/")
 @login_required
