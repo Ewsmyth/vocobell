@@ -18,3 +18,6 @@ venv/
 
 # Environment files (if you ever add secrets)
 .env
+
+# Any Wav files
+.wav
